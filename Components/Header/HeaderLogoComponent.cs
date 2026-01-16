@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ManualToSdetMercadoLibre.Pages;
+using OpenQA.Selenium;
+
+namespace ManualToSdetMercadoLibre.Components.Header
+{
+    internal class HeaderLogoComponent : PageControls
+    {
+        public HeaderLogoComponent(IWebDriver driver) : base(driver) { }
+
+
+        public IWebElement MainLogo => driver.FindElement(By.XPath("//a[contains(@class,'nav-logo')]"));
+
+        public HomePage NavigateToHome()
+        {
+            MainLogo.Click();
+            return new HomePage(driver);
+        }
+    }
+
+
+}
+
