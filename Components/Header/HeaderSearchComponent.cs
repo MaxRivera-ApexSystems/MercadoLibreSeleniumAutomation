@@ -8,7 +8,7 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    internal class HeaderSearchComponent : PageControls
+    public class HeaderSearchComponent : BaseComponent
     {
 
         public HeaderSearchComponent(IWebDriver driver) : base(driver) { }
@@ -21,15 +21,13 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public void EnterSearchText(string text) => SearchInput.SendKeys(text);
         public void ClickSearchButton() => SearchButton.Click();
 
-        public void Search(string text)
+        public SearchResultsPage SearchFor(string query)
         {
-            EnterSearchText(text);
-            ClickSearchButton();
+            SearchInput.SendKeys(query);
+            SearchButton.Click();
+
+            return new SearchResultsPage(driver);
         }
-
-
-
-
 
 
 

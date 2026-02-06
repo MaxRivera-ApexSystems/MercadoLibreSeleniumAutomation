@@ -8,10 +8,9 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    internal class HeaderLogoComponent : PageControls
+    public class HeaderLogoComponent : BaseComponent
     {
         public HeaderLogoComponent(IWebDriver driver) : base(driver) { }
-
 
         public IWebElement MainLogo => driver.FindElement(By.XPath("//a[contains(@class,'nav-logo')]"));
 

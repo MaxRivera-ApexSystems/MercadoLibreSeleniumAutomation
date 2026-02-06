@@ -7,14 +7,10 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Pages
 {
-    internal class EnvioGratisPage : PageControls
+    public class EnvioGratisPage : BaseComponent
     {
 
         public EnvioGratisPage(IWebDriver driver) : base(driver) { }
-
-
-
-
 
     }
 }

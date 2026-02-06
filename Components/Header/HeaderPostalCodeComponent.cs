@@ -8,14 +8,12 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    internal class HeaderPostalCodeComponent : PageControls
+    public class HeaderPostalCodeComponent : BaseComponent
     {
-
         public HeaderPostalCodeComponent(IWebDriver driver) : base(driver) { }
 
         // Locators
         public IWebElement PostalCodeButton => driver.FindElement(By.XPath("//a[contains(@class,'nav-menu-cp')]"));
-
 
         // === Locators ===
 
@@ -27,11 +25,6 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
         public IWebElement PostalCodeDisplayText =>
             driver.FindElement(By.XPath("//a[contains(@class,'nav-menu-cp')]"));
-
-
-
-
-
 
         public HeaderPostalCodeComponent OpenPostalCodeEditor()
         {
@@ -47,9 +40,6 @@ namespace ManualToSdetMercadoLibre.Components.Header
         }
 
         public string DisplayedPostalCode => PostalCodeDisplayText.Text.Trim();
-
-
-
 
     }
 }

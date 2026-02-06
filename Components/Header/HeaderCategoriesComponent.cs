@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 using ManualToSdetMercadoLibre.Pages;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
 
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    internal class HeaderCategoriesComponent : PageControls
+    public class HeaderCategoriesComponent : BaseComponent
     {
         public HeaderCategoriesComponent(IWebDriver driver) : base(driver) { }
-
         // ===== MAIN BUTTON =====
-        public IWebElement NavMenuList => driver.FindElement(By.XPath("//ul[@class='nav-menu-list']"));
-
+        public IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
         public IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
         // NEW — overlay locator Hover over 
         public IWebElement CategoryOverlay => driver.FindElement(By.XPath("//div[contains(@class,'nav-categs-overlay')]"));
@@ -29,9 +28,130 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public IWebElement SubMenuTitle => SubMenuContainer.FindElement(By.CssSelector("header div[role='heading']"));
         // ALL subcategory groups
         public IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
+        public IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
+
         // items inside each group
         public IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
+
+        public IList<IWebElement> GroupTitles => SubMenuContainer.FindElements(By.CssSelector("a.nav-categs-detail__title"));
+
+        //Sub dropdown Tecnologia
+        private By CategoryGroupContainers => By.XPath("//div[contains(@class,'nav-categs-detail__categ')]");
+
+
+        private By CategoryTitleLink => By.XPath(".//div[contains(@class,'nav-categs-detail__title')]//a");
+
+
+        private By CategoryItemsLinks => By.XPath(".//ul[contains(@class,'nav-categs-detail__categ-list')]//a");
+
+
+
+        //  BOTONES  DE PERFIL DE USUARIO
+        public By UserMenuContainer => By.Id("nav-header-menu")
+            ;
+
+        // Links del menú de usuario
+        public By CreateAccountLink => By.CssSelector("a[data-link-id='registration']");
+
+
+        public By LoginLink => By.CssSelector("a[data-link-id='login']");
+
+
+        public By PurchasesLink => By.CssSelector("a[data-link-id='purchases']");
+
+
+        // Icono del carrito
+        public By CartIcon => By.Id("nav-cart");
+
+
+
+
         // ===== ACTIONS =====
+
+        //Technology dropdown Groups
+        public IList<string> GetItemsForGroup(string groupTitle)
+        {
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            //kgda?
+            var groupContainer = GetGroupContainerByTitle(groupTitle);
+
+            var items = groupContainer.FindElements(CategoryItemsLinks);
+
+            return items.Where(i => i.Displayed).Select(i => i.Text.Trim()).Where(t => !string.IsNullOrEmpty(t)).ToList();
+
+        }
+
+        public void ClickGroupTitle(string groupTitle)
+        {
+            var groupContainer = GetGroupContainerByTitle(groupTitle);
+
+            var titleLink = groupContainer.FindElement(CategoryTitleLink);
+
+            titleLink.Click();
+        }
+
+        public void ClickItemInGroup(string groupTitle, string itemText)
+        {
+            var groupContainer = GetGroupContainerByTitle(groupTitle);
+
+            var items = groupContainer.FindElements(CategoryItemsLinks);
+
+            var itemToClick = items.FirstOrDefault(i => i.Text.Trim().Equals(itemText));
+
+            if (itemToClick == null)
+            {
+                throw new NoSuchElementException(
+                    $"No se encontró el item '{itemText}' en el grupo '{groupTitle}'"
+                );
+            }
+
+            itemToClick.Click();
+        }
+
+        public IList<string> GetAllItemsFromAllGroups()
+        {
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            var groups = wait.Until(d => d.FindElements(CategoryGroupContainers));
+
+            return groups
+                .SelectMany(group =>
+                    group.FindElements(CategoryItemsLinks)
+                )
+                .Where(i => i.Displayed)
+                .Select(i => i.Text.Trim())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToList();
+        }
+
+        public IList<string> GetAvailableGroupTitles()
+        {
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            // Esperar a que existan grupos
+            var groups = wait.Until(d =>
+            {
+                var elements = d.FindElements(CategoryGroupContainers);
+                return elements.Count > 0 ? elements : null;
+            });
+
+            var titles = new List<string>();
+
+            foreach (var group in groups)
+            {
+                var titleElement = group.FindElement(CategoryTitleLink);
+
+                if (titleElement.Displayed && !string.IsNullOrWhiteSpace(titleElement.Text))
+                {
+                    titles.Add(titleElement.Text.Trim());
+                }
+            }
+
+            return titles;
+        }
+
+
         public CategoryResultPage OpenCategory(string category)
         {
             GetCategoryElement(category).Click();
@@ -44,14 +164,79 @@ namespace ManualToSdetMercadoLibre.Components.Header
             Hover(CategoriasButton);
             return this;
         }
+        public HeaderCategoriesComponent OpenCategoriesSubDropDown()
+        {
+            Hover(GetCategoryElement("Tecnología"));
+
+            return this;
+        }
+
+
+        //helper del  GetItemsForGroup
+        private IWebElement GetGroupContainerByTitle(string groupTitle)
+        {
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+            var groups = wait.Until(d => d.FindElements(CategoryGroupContainers));
 
 
 
-      
+            foreach (var group in groups)
+            {
+                var titleElement = group.FindElement(CategoryTitleLink);
+
+                if (titleElement.Text.Trim().Equals(groupTitle))
+                {
+                    return group;
+                }
+            }
+
+            throw new NoSuchElementException($"No se encontró el grupo '{groupTitle}'");
+        }
 
 
 
 
+        //NavMenu methods
+        public void ClickNavMenuItem(string menuText)
+        {
+            var menuItems = NavMenuList;
+
+            var itemToClick = menuItems.FirstOrDefault(we => we.Displayed && we.Text.Trim().Equals(menuText));
+
+
+            if (itemToClick == null)
+            {
+                throw new NoSuchElementException(
+                    $"No se encontró el menú '{menuText}'"
+                );
+            }
+
+            itemToClick.Click();
+        }
+
+
+
+        //acciones menu de usario al final de nav menu 
+        public void ClickCreateAccount()
+        {
+            driver.FindElement(CreateAccountLink).Click();
+        }
+
+        public void ClickLogin()
+        {
+            driver.FindElement(LoginLink).Click();
+        }
+
+        public void ClickPurchases()
+        {
+            driver.FindElement(PurchasesLink).Click();
+        }
+
+        public void ClickCart()
+        {
+            driver.FindElement(CartIcon).Click();
+        }
 
 
 

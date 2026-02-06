@@ -8,117 +8,40 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Components.Carousel
 {
-    internal class CarouselComponent : PageControls
+    public class CarouselComponent : BaseComponent
     {
 
         public CarouselComponent(IWebDriver driver) : base(driver) { }
 
-        // ======================
-        // LOCATORS
-        // ======================
+    public  By ExhibitorCarousel =>
+        By.CssSelector("[data-andes-carousel-snapped-component='true']");
 
-        // Main carousel container
-        private IWebElement CarouselContainer =>
-            driver.FindElement(By.CssSelector("section[aria-roledescription='Carrusel']"));
+        // Wrapper que contiene los slides
+        public  By CarouselWrapper =>
+            By.CssSelector(".andes-carousel-snapped__wrapper");
 
-        // All visible slides
-        private IReadOnlyCollection<IWebElement> Slides =>
-            CarouselContainer.FindElements(By.CssSelector(".andes-carousel-snapped__slide"));
+        // Todos los slides
+        public  By CarouselSlides =>
+            By.CssSelector(".andes-carousel-snapped__slide");
 
-        // Slide navigation buttons
-        private IWebElement NextButton =>
-            CarouselContainer.FindElement(By.CssSelector("button[data-andes-carousel-snapped-control='next']"));
+        // Slide activo
+        public By ActiveSlide =>
+            By.CssSelector(".andes-carousel-snapped__slide--active");
 
-        private IWebElement PrevButton =>
-            CarouselContainer.FindElement(By.CssSelector("button[data-andes-carousel-snapped-control='previous']"));
+        // Links (banners clickeables)
+        public By CarouselItems =>
+            By.CssSelector(".andes-carousel-snapped__slide a");
 
-        public void GoToNextSlide() => NextButton.Click();
+        // Imágenes del carrusel
+        public By CarouselImages =>
+            By.CssSelector(".andes-carousel-snapped__slide img");
 
-     
-        public void GoToPreviousSlide() => PrevButton.Click();
+        // Flecha siguiente
+        public   By NextButton =>
+            By.CssSelector("[data-andes-carousel-snapped-control='next']");
 
-       
-        public int GetSlideCount() => Slides.Count;
-
-     
-        public List<string> GetSlideTitles()
-        {
-            return Slides
-                .Select(s => s.Text.Trim())
-                .Where(t => !string.IsNullOrEmpty(t))
-                .ToList();
-        }
-
-       
-        public int GetActiveSlideIndex()
-        {
-            var active = Slides.FirstOrDefault(s =>
-                s.GetAttribute("class").Contains("--is-selected"));
-
-            if (active == null)
-                return -1;
-
-            return Slides.ToList().IndexOf(active);
-        }
-
-        public void NavigateToSlide(string slidePartialText, int maxSteps = 8)
-        {
-            slidePartialText = slidePartialText.ToLower();
-
-            for (int i = 0; i < maxSteps; i++)
-            {
-                var found = Slides.FirstOrDefault(s =>
-                    s.Text.ToLower().Contains(slidePartialText));
-
-                if (found != null)
-                {
-                    found.Click();
-                    return;
-                }
-
-                GoToNextSlide();
-            }
-
-            throw new Exception($"Slide con texto '{slidePartialText}' no fue encontrada después de {maxSteps} pasos.");
-        }
-
-
-
-
-        public void LogCarouselSlides()
-        {
-            var slides = CarouselContainer.FindElements(By.XPath("./li"));
-
-            Console.WriteLine("======= CAROUSEL SLIDES =======");
-
-            for (int i = 0; i < slides.Count; i++)
-            {
-                var slide = slides[i];
-                string content = slide.Text?.Trim();
-
-                // Fallbacks if no visible text
-                if (string.IsNullOrEmpty(content))
-                {
-                    content =
-                        slide.GetAttribute("aria-label") ??
-                        slide.GetAttribute("title") ??
-                        slide.GetAttribute("alt") ??
-                        "(no text / no label)";
-                }
-
-                // If still empty, try image source
-                var imgs = slide.FindElements(By.TagName("img"));
-                if (imgs.Any())
-                {
-                    content += $" | img: {imgs.First().GetAttribute("src")}";
-                }
-
-                Console.WriteLine($"[Carousel] Slide #{i}: {content}");
-            }
-
-            Console.WriteLine("================================");
-        }
-
-
+        // Flecha anterior
+        public By PreviousButton =>
+            By.CssSelector("[data-andes-carousel-snapped-control='previous']");
     }
 }

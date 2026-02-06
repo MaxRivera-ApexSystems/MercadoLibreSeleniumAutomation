@@ -10,7 +10,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace ManualToSdetMercadoLibre.Pages
 {
-    internal class PageControls
+    abstract class PageControls
     {
         protected IWebDriver driver;
 

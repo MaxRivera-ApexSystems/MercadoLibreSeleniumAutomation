@@ -8,7 +8,7 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    internal class HeaderPromoBannerComponent : PageControls
+    public class HeaderPromoBannerComponent : BaseComponent
     {
 
         public HeaderPromoBannerComponent(IWebDriver driver) : base(driver) { }
@@ -18,10 +18,9 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
 
         // Action
-        public EnvioGratisPage OpenFreeShippingPromotion()
+        public void  OpenFreeShippingPromotion()
         {
             FreeShippingBanner.Click();
-            return new EnvioGratisPage(driver);
         }
     }
 

@@ -7,10 +7,8 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Pages
 {
-    internal class SearchResultsPage : PageControls
+    public class SearchResultsPage : BaseComponent
     {
-
-
         public SearchResultsPage(IWebDriver driver) : base(driver) { }
     }
 }

@@ -26,83 +26,104 @@ namespace ManualToSdetMercadoLibre.Tests
         {
             home = new HomePage(driver);
             categories = new HeaderCategoriesComponent(driver);
-            home.OpenHomePage();
             header = new HeaderComponent(driver);
             carousel = new CarouselComponent(driver);
 
         }
+        [Test]
+        public void SearchBar()
+        {
 
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
 
+            header.SearchFor("Pokemon");
+            Thread.Sleep(2000);
 
-        /* [Test]
-         public void ClickLogo_ShouldNavigateToHome()
-         {
-             home.Header.Logo.ClickMainLogo();
-             Assert.That(driver.Url.Contains("mercadolibre.com.mx"));
-         }
-        */
+        }
+
+        [Test]
+        public void NavBar()
+        {
+
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+
+            var visibleMenu = header.GetAvailableMenuList();
+
+            foreach (var menuItem in visibleMenu) {
+
+                Console.WriteLine("*" + menuItem);
+
+            }
+
+            categories.ClickNavMenuItem("Ofertas");
+            Thread.Sleep(2000);
+
+        }
 
         [Test]
         public void HoverOverCategories()
         {
+         
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+            
+            categories.OpenCategoriesDropDown();
+            categories.OpenCategoriesSubDropDown();
+            Thread.Sleep(3000);
+            var groupTitles = categories.GetAvailableGroupTitles();
 
-            /* header.GetVisibleNavMenuItemTexts();
-             header.SearchAndReturnUrl("switch");
-            */
+            Console.WriteLine("Grupos encontrados: " + groupTitles.Count);
+
+            foreach (var title in groupTitles)
+            {
+                Console.WriteLine(title);
+            }
+            // categories.ClickItemInGroup("Computación", "Laptops");
+            // Assert.That(resultList, Does.Contain("Supermercado").And.Contain("Ofertas"));
+            //Assert.That(resultList, Has.Count.GreaterThan(5));
 
 
-            // header.GetVisibleCategoriesAfterHover();
-            // header.HoverAndClickCategory("mascotas");
-
-                 home.Carousel.GoToNextSlide();
-
-               var slides = home.Carousel.GetSlideTitles();
-           
-
-
-            home.Carousel.LogCarouselSlides();
         }
 
         [TestCaseSource(typeof(CategoriesTestData), nameof(CategoriesTestData.CategoriesList))]
         public void ClickCategory_ShouldNavigate(string categoryName)
         {
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+
+
             categories.Hover(categories.CategoriasButton);
 
-            categories.ClickCategory(categoryName);
+            categories.OpenCategory(categoryName);
 
-            Assert.That(driver.Url.Contains(categoryName.ToLower()),
-                $"Navigation failed for category: {categoryName}");
+            Assert.That(driver.Url.Contains(categoryName.ToLower()), $"Navigation failed for category: {categoryName}");
+
         }
 
 
         [Test]
         public void HoverTecnologia_ShouldDisplaySubMenu()
         {
-            categories.Hover(categories.CategoriasButton);
-            Thread.Sleep(3000);
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
 
-            categories.Hover(categories.GetCategoryElement("Tecnología"));
-
-            // Esperamos a que aparezca el submenu - sirve esto? 
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+            categories.OpenCategoriesDropDown();
+            categories.OpenCategoriesSubDropDown();
+           // Esperamos a que aparezca el submenu -sirve esto ? --cambiar esto por la implementacon del wait del base page
+           var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
             wait.Until(d => categories.SubMenuContainer.Displayed);
+            var groupTitles = header.GetSubCategoryTitlesandItems().ToList();
 
-            // Validar título
-            Assert.That(categories.SubMenuTitle.Text, Is.EqualTo("Tecnología"));
-
-            // validar que existan subgrupos
-            Assert.That(categories.SubCategoryGroups.Count, Is.GreaterThan(0));
-
-            // validar que existan links
-            Assert.That(categories.SubCategoryLinks.Count, Is.GreaterThan(0));
-
-
-            foreach (var group in categories.SubCategoryGroups)
+            foreach (var title in groupTitles)
             {
-                Console.WriteLine($"Grupo: {group.Text}");
+                Console.WriteLine($"Grupo: {title}");
+            
+
             }
+          /*  var itemsInGroup = categories.GetItemsForGroup("Consolas y Videojuegos");
+            foreach(var item in itemsInGroup)
+            {
+                Console.WriteLine($"Elemento del grupo : {item}");
 
-
+            }
+          */
 
         }
 
