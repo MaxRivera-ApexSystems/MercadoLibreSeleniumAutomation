@@ -18,7 +18,7 @@ namespace ManualToSdetMercadoLibre.Pages
         public CarouselComponent Carousel { get; }
 
 
-
+        //Se sugiere que todo lo que sea referente a locators sea private o protected(protected en caso de que se aplique herencia)
         // Inject driver
         public HomePage(IWebDriver driver) : base(driver)
         {
@@ -42,7 +42,7 @@ namespace ManualToSdetMercadoLibre.Pages
             By.CssSelector(".dynamic-access-card button");
 
 
-
+        //Excelentes métodos!!
         public bool IsCarouselDisplayed()
         {
             return driver.FindElement(Carousel.NextButton).Displayed;

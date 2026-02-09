@@ -8,7 +8,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 namespace ManualToSdetMercadoLibre.Components.Header
 {
-    public class HeaderComponent : BaseComponent
+    public class HeaderComponent : BaseComponent //Excelente implementación de clase!!
     {
         public HeaderLogoComponent Logo { get; }
         public HeaderPromoBannerComponent PromoBanner { get; }
