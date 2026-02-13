@@ -12,8 +12,11 @@ namespace ManualToSdetMercadoLibre.Components.Header
 {
     public class HeaderCategoriesComponent : BaseComponent
     {
+        
         public HeaderCategoriesComponent(IWebDriver driver) : base(driver) { }
         // ===== MAIN BUTTON =====
+
+        //Se sugiere que todo lo referente a locators sea privado o protected (protected en caso de que se use herencia donde se reutilize el locator)
         public IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
         public IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
         // NEW — overlay locator Hover over 
@@ -129,7 +132,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
-            // Esperar a que existan grupos
+            // Esperar a que existan grupos. --Excelente forma de esperar!
             var groups = wait.Until(d =>
             {
                 var elements = d.FindElements(CategoryGroupContainers);
@@ -166,7 +169,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         }
         public HeaderCategoriesComponent OpenCategoriesSubDropDown()
         {
-            Hover(GetCategoryElement("Tecnología"));
+            Hover(GetCategoryElement("Tecnología"));//No se recomienda hardcodear datos de prueba en el Page Object.
 
             return this;
         }
@@ -196,9 +199,9 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
 
 
-
+        //Se sugiere que lo regresado no sea un void sino la referencia a un page object que maneje el componente que aparece al dar click en el Menu Item.
         //NavMenu methods
-        public void ClickNavMenuItem(string menuText)
+        public void ClickNavMenuItem(string menuText) 
         {
             var menuItems = NavMenuList;
 
@@ -216,23 +219,26 @@ namespace ManualToSdetMercadoLibre.Components.Header
         }
 
 
-
+        //Se sugiere que lo regresado no sea un void sino la referencia a un page object que maneje el componente que aparece al dar click en Crear Cuenta
         //acciones menu de usario al final de nav menu 
         public void ClickCreateAccount()
         {
             driver.FindElement(CreateAccountLink).Click();
         }
 
+        //Se sugiere que lo regresado no sea un void sino la referencia a un page object que maneje el componente que aparece al dar click en Login
         public void ClickLogin()
         {
             driver.FindElement(LoginLink).Click();
         }
 
+        //Se sugiere que......dar click en Compras
         public void ClickPurchases()
         {
             driver.FindElement(PurchasesLink).Click();
         }
 
+        //Se sugiere que.....dar click en el Carrito
         public void ClickCart()
         {
             driver.FindElement(CartIcon).Click();

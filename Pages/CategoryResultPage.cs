@@ -15,7 +15,7 @@ namespace ManualToSdetMercadoLibre.Pages
 
         public int GetProductCount()
         {
-            Thread.Sleep(5000);
+            Thread.Sleep(5000); // Sería conveniente hacerlo con un WebDriver wait si la busqueda posterior no está anidada.
             return driver.FindElements(ProductCards).Count;
         }
 

@@ -8,8 +8,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace ManualToSdetMercadoLibre.Pages.Base
 {
-    public class CategorysResultsBasePage : BaseComponent
-
+    public class CategorysResultsBasePage : BaseComponent //Si es una BasePage para Category Results, la clase puede ser abstracta
     {
         protected CategorysResultsBasePage(IWebDriver driver) : base(driver) { }
         protected By ProductCards => By.CssSelector("div.poly-card");
