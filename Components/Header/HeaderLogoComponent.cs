@@ -12,7 +12,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
     {
         public HeaderLogoComponent(IWebDriver driver) : base(driver) { }
 
-        public IWebElement MainLogo => driver.FindElement(By.XPath("//a[contains(@class,'nav-logo')]"));
+        private IWebElement MainLogo => driver.FindElement(By.XPath("//a[contains(@class,'nav-logo')]"));
 
         public HomePage NavigateToHome()
         {

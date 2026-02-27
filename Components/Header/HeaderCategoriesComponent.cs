@@ -14,26 +14,26 @@ namespace ManualToSdetMercadoLibre.Components.Header
     {
         public HeaderCategoriesComponent(IWebDriver driver) : base(driver) { }
         // ===== MAIN BUTTON =====
-        public IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
-        public IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
+        private IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
+        private IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
         // NEW — overlay locator Hover over 
-        public IWebElement CategoryOverlay => driver.FindElement(By.XPath("//div[contains(@class,'nav-categs-overlay')]"));
+        private IWebElement CategoryOverlay => driver.FindElement(By.XPath("//div[contains(@class,'nav-categs-overlay')]"));
 
-        public IReadOnlyCollection<IWebElement> CategoryItems => driver.FindElements(By.XPath("//ul[@class='nav-categs-departments']//a"));
+        private IReadOnlyCollection<IWebElement> CategoryItems => driver.FindElements(By.XPath("//ul[@class='nav-categs-departments']//a"));
         //===== GENERIC CATEGORIE LOCATOR =====
-        public IWebElement GetCategoryElement(string categoryName) => driver.FindElement(By.XPath($"//ul//a[normalize-space()='{categoryName}']"));
+        private IWebElement GetCategoryElement(string categoryName) => driver.FindElement(By.XPath($"//ul//a[normalize-space()='{categoryName}']"));
         // SUBMENU of  teconology category 
-        public IWebElement SubMenuContainer => driver.FindElement(By.CssSelector("div.nav-categs-detail"));
+        private IWebElement SubMenuContainer => driver.FindElement(By.CssSelector("div.nav-categs-detail"));
         // MAIN title of submenu
-        public IWebElement SubMenuTitle => SubMenuContainer.FindElement(By.CssSelector("header div[role='heading']"));
+        private IWebElement SubMenuTitle => SubMenuContainer.FindElement(By.CssSelector("header div[role='heading']"));
         // ALL subcategory groups
-        public IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
-        public IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
+        private IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
+        private IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
 
         // items inside each group
-        public IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
+        private IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
 
-        public IList<IWebElement> GroupTitles => SubMenuContainer.FindElements(By.CssSelector("a.nav-categs-detail__title"));
+        private IList<IWebElement> GroupTitles => SubMenuContainer.FindElements(By.CssSelector("a.nav-categs-detail__title"));
 
         //Sub dropdown Tecnologia
         private By CategoryGroupContainers => By.XPath("//div[contains(@class,'nav-categs-detail__categ')]");
@@ -47,21 +47,21 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
 
         //  BOTONES  DE PERFIL DE USUARIO
-        public By UserMenuContainer => By.Id("nav-header-menu")
+        private By UserMenuContainer => By.Id("nav-header-menu")
             ;
 
         // Links del menú de usuario
-        public By CreateAccountLink => By.CssSelector("a[data-link-id='registration']");
+        private By CreateAccountLink => By.CssSelector("a[data-link-id='registration']");
 
 
-        public By LoginLink => By.CssSelector("a[data-link-id='login']");
+        private By LoginLink => By.CssSelector("a[data-link-id='login']");
 
 
-        public By PurchasesLink => By.CssSelector("a[data-link-id='purchases']");
+        private By PurchasesLink => By.CssSelector("a[data-link-id='purchases']");
 
 
         // Icono del carrito
-        public By CartIcon => By.Id("nav-cart");
+        private By CartIcon => By.Id("nav-cart");
 
 
 
@@ -119,10 +119,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
                 .SelectMany(group =>
                     group.FindElements(CategoryItemsLinks)
                 )
-                .Where(i => i.Displayed)
-                .Select(i => i.Text.Trim())
-                .Where(t => !string.IsNullOrEmpty(t))
-                .ToList();
+                .Where(i => i.Displayed).Select(i => i.Text.Trim()).Where(t => !string.IsNullOrEmpty(t)).ToList();
         }
 
         public IList<string> GetAvailableGroupTitles()
@@ -130,6 +127,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
             // Esperar a que existan grupos
+            // quitar este wait y poner el normal
             var groups = wait.Until(d =>
             {
                 var elements = d.FindElements(CategoryGroupContainers);
@@ -145,6 +143,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
                 if (titleElement.Displayed && !string.IsNullOrWhiteSpace(titleElement.Text))
                 {
                     titles.Add(titleElement.Text.Trim());
+                    // cochinero, ver como implementar linq
                 }
             }
 
@@ -164,9 +163,13 @@ namespace ManualToSdetMercadoLibre.Components.Header
             Hover(CategoriasButton);
             return this;
         }
-        public HeaderCategoriesComponent OpenCategoriesSubDropDown()
+
+
+
+        // Usar  para Tecnologia Dropdown
+        public HeaderCategoriesComponent OpenCategoriesSubDropDown(string categoryName)
         {
-            Hover(GetCategoryElement("Tecnología"));
+            Hover(GetCategoryElement(categoryName));
 
             return this;
         }
@@ -198,47 +201,58 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
 
         //NavMenu methods
-        public void ClickNavMenuItem(string menuText)
+
+
+        // regresando 
+        public CategoryResultPage ClickNavMenuItem(string menuText)
         {
             var menuItems = NavMenuList;
-
-            var itemToClick = menuItems.FirstOrDefault(we => we.Displayed && we.Text.Trim().Equals(menuText));
-
-
-            if (itemToClick == null)
+            foreach (var item in menuItems)
             {
-                throw new NoSuchElementException(
-                    $"No se encontró el menú '{menuText}'"
-                );
+                if (item.Text.Trim().Equals(menuText, StringComparison.OrdinalIgnoreCase))
+                {
+                    item.Click();
+                    return new CategoryResultPage(driver);
+                }
             }
 
-            itemToClick.Click();
+            throw new NoSuchElementException($"Menu item '{menuText}' not found.");
         }
+
 
 
 
         //acciones menu de usario al final de nav menu 
-        public void ClickCreateAccount()
+    
+        public RegisterPage ClickCreateAccount()
         {
             driver.FindElement(CreateAccountLink).Click();
+            return new RegisterPage(driver);
         }
 
-        public void ClickLogin()
+  
+        public LoginPage ClickLogin()
         {
             driver.FindElement(LoginLink).Click();
+            return new LoginPage(driver);
         }
 
-        public void ClickPurchases()
+   
+      
+        public PurchasesPage ClickPurchases()
         {
             driver.FindElement(PurchasesLink).Click();
+            return new PurchasesPage(driver);
         }
 
-        public void ClickCart()
+     
+     
+
+        public CartPage ClickCart()
         {
             driver.FindElement(CartIcon).Click();
+            return new CartPage(driver);
         }
-
-
 
     }
 

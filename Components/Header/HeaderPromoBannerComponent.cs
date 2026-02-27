@@ -14,7 +14,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public HeaderPromoBannerComponent(IWebDriver driver) : base(driver) { }
 
         // Locator
-        public IWebElement FreeShippingBanner => driver.FindElement(By.XPath("//div[contains(@class,'nav-right-area')]//a[@class='exhibitor__picture']"));
+        private IWebElement FreeShippingBanner => driver.FindElement(By.XPath("//div[contains(@class,'nav-right-area')]//a[@class='exhibitor__picture']"));
 
 
         // Action

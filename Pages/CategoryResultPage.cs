@@ -8,7 +8,7 @@ using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Pages
 {
-    public class CategoryResultPage : CategorysResultsBasePage
+    public class CategoryResultPage : ProductListingPage
     {
         public CategoryResultPage(IWebDriver driver) : base(driver) { }
 

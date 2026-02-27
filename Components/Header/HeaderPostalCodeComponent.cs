@@ -13,7 +13,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public HeaderPostalCodeComponent(IWebDriver driver) : base(driver) { }
 
         // Locators
-        public IWebElement PostalCodeButton => driver.FindElement(By.XPath("//a[contains(@class,'nav-menu-cp')]"));
+        private IWebElement PostalCodeButton => driver.FindElement(By.XPath("//a[contains(@class,'nav-menu-cp')]"));
 
         // === Locators ===
 

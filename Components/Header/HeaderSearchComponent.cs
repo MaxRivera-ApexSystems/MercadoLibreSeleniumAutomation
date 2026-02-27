@@ -14,8 +14,8 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public HeaderSearchComponent(IWebDriver driver) : base(driver) { }
 
         // Locators
-        public IWebElement SearchInput => driver.FindElement(By.XPath("//input[@id='cb1-edit']"));
-        public IWebElement SearchButton => driver.FindElement(By.XPath("//button[@class='nav-search-btn']"));
+        private IWebElement SearchInput => driver.FindElement(By.XPath("//input[@id='cb1-edit']"));
+        private IWebElement SearchButton => driver.FindElement(By.XPath("//button[@class='nav-search-btn']"));
 
         // Actions
         public void EnterSearchText(string text) => SearchInput.SendKeys(text);

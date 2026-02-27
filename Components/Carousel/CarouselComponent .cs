@@ -13,35 +13,62 @@ namespace ManualToSdetMercadoLibre.Components.Carousel
 
         public CarouselComponent(IWebDriver driver) : base(driver) { }
 
-    public  By ExhibitorCarousel =>
-        By.CssSelector("[data-andes-carousel-snapped-component='true']");
+    private  By ExhibitorCarousel => By.CssSelector("[data-andes-carousel-snapped-component='true']");
+
 
         // Wrapper que contiene los slides
-        public  By CarouselWrapper =>
-            By.CssSelector(".andes-carousel-snapped__wrapper");
+        private  By CarouselWrapper => By.CssSelector(".andes-carousel-snapped__wrapper");
+
 
         // Todos los slides
-        public  By CarouselSlides =>
-            By.CssSelector(".andes-carousel-snapped__slide");
+        private  By CarouselSlides => By.CssSelector(".andes-carousel-snapped__slide");
+
 
         // Slide activo
-        public By ActiveSlide =>
-            By.CssSelector(".andes-carousel-snapped__slide--active");
+        private By ActiveSlide => By.CssSelector(".andes-carousel-snapped__slide--active");
+
 
         // Links (banners clickeables)
-        public By CarouselItems =>
-            By.CssSelector(".andes-carousel-snapped__slide a");
+        private By CarouselItems => By.CssSelector(".andes-carousel-snapped__slide a");
+
 
         // Imágenes del carrusel
-        public By CarouselImages =>
+        private By CarouselImages =>
             By.CssSelector(".andes-carousel-snapped__slide img");
 
         // Flecha siguiente
-        public   By NextButton =>
+        private By NextButton =>
             By.CssSelector("[data-andes-carousel-snapped-control='next']");
 
         // Flecha anterior
-        public By PreviousButton =>
+        private By PreviousButton =>
             By.CssSelector("[data-andes-carousel-snapped-control='previous']");
+
+
+        public bool IsDisplayed()
+        {
+            return driver.FindElement(NextButton).Displayed;
+        }
+
+        public int GetSlideCount()
+        {
+            return driver.FindElements(CarouselSlides).Count;
+        }
+
+        public void ClickNext()
+        {
+            driver.FindElement(NextButton).Click();
+        }
+
+        public void ClickPrevious()
+        {
+            driver.FindElement(PreviousButton).Click();
+        }
+
+        public void ClickActiveBanner()
+        {
+            var activeSlide = driver.FindElement(ActiveSlide);
+            activeSlide.FindElement(By.TagName("a")).Click();
+        }
     }
 }
