@@ -27,47 +27,56 @@ namespace ManualToSdetMercadoLibre.Tests
             home = new HomePage(driver);
             categories = new HeaderCategoriesComponent(driver);
             header = new HeaderComponent(driver);
-            carousel = new CarouselComponent(driver);
+
 
         }
         [Test]
-        public void SearchBar()
+        public void SearchBarSingleProductDataReturn()
         {
+            var resultsPage = new SearchResultsPage(driver);
 
             driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
 
-            header.SearchFor("Pokemon");
-            Thread.Sleep(2000);
+            header.Search.SearchFor("Pokemon");
+            Thread.Sleep(5000);
 
+            resultsPage.WaitForResultsFromSearchInput();
+
+
+
+            int count = resultsPage.GetProductCount();
+
+            Console.WriteLine($"Productos encontrados: {count}");
+            var product = resultsPage.GetProductInfoByIndex(4);
         }
-
         [Test]
-        public void NavBar()
+        public void SearchBarAllProductDataReturn()
         {
+            var resultsPage = new SearchResultsPage(driver);
 
             driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
 
-            var visibleMenu = header.GetAvailableMenuList();
+            header.Search.SearchFor("Nintendo");
+            Thread.Sleep(5000);
 
-            foreach (var menuItem in visibleMenu) {
+            resultsPage.WaitForResultsFromSearchInput();
 
-                Console.WriteLine("*" + menuItem);
+            int count = resultsPage.GetProductCount();
 
-            }
-
-            categories.ClickNavMenuItem("Ofertas");
-            Thread.Sleep(2000);
-
+            Console.WriteLine($"Productos encontrados: {count}");
+            var products = resultsPage.LogAndGetProductsInfo();
         }
+
+    
 
         [Test]
         public void HoverOverCategories()
         {
-         
+
             driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-            
+
             categories.OpenCategoriesDropDown();
-            categories.OpenCategoriesSubDropDown();
+            categories.OpenCategoriesSubDropDown("Tecnología");
             Thread.Sleep(3000);
             var groupTitles = categories.GetAvailableGroupTitles();
 
@@ -77,55 +86,36 @@ namespace ManualToSdetMercadoLibre.Tests
             {
                 Console.WriteLine(title);
             }
-            // categories.ClickItemInGroup("Computación", "Laptops");
-            // Assert.That(resultList, Does.Contain("Supermercado").And.Contain("Ofertas"));
-            //Assert.That(resultList, Has.Count.GreaterThan(5));
-
-
+           
         }
-
-        [TestCaseSource(typeof(CategoriesTestData), nameof(CategoriesTestData.CategoriesList))]
-        public void ClickCategory_ShouldNavigate(string categoryName)
-        {
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-
-
-            categories.Hover(categories.CategoriasButton);
-
-            categories.OpenCategory(categoryName);
-
-            Assert.That(driver.Url.Contains(categoryName.ToLower()), $"Navigation failed for category: {categoryName}");
-
-        }
-
 
         [Test]
-        public void HoverTecnologia_ShouldDisplaySubMenu()
+        public void SubDropDownTest()
         {
+
             driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
 
             categories.OpenCategoriesDropDown();
-            categories.OpenCategoriesSubDropDown();
-           // Esperamos a que aparezca el submenu -sirve esto ? --cambiar esto por la implementacon del wait del base page
-           var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
-            wait.Until(d => categories.SubMenuContainer.Displayed);
-            var groupTitles = header.GetSubCategoryTitlesandItems().ToList();
+            categories.OpenCategoriesSubDropDown("Tecnología");
+            categories.ClickItemInGroup("Consolas y Videojuegos", "Videojuegos");
+            Thread.Sleep(3000);
 
-            foreach (var title in groupTitles)
-            {
-                Console.WriteLine($"Grupo: {title}");
-            
+            var resultsPage = new SearchResultsPage(driver);
 
-            }
-          /*  var itemsInGroup = categories.GetItemsForGroup("Consolas y Videojuegos");
-            foreach(var item in itemsInGroup)
-            {
-                Console.WriteLine($"Elemento del grupo : {item}");
+            resultsPage.WaitForCategorySection();
+            int count = resultsPage.GetProductCount();
 
-            }
-          */
+            var products = resultsPage.LogAndGetProductsInfo();
+
+
 
         }
+
+
+    
+
+
+      
 
 
 

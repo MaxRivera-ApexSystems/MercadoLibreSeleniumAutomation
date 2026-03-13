@@ -23,6 +23,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
         public SearchResultsPage SearchFor(string query)
         {
+            SearchInput.Clear();
             SearchInput.SendKeys(query);
             SearchButton.Click();
 
@@ -30,10 +31,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         }
 
 
-
-
-
-
+       
 
     }
 }

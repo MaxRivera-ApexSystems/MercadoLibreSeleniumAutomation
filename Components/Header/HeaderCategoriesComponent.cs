@@ -14,7 +14,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
     {
         public HeaderCategoriesComponent(IWebDriver driver) : base(driver) { }
         // ===== MAIN BUTTON =====
-        private IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
+        public IReadOnlyCollection<IWebElement> NavMenuList => driver.FindElements(By.XPath("//ul[@class='nav-menu-list']/li"));
         private IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
         // NEW — overlay locator Hover over 
         private IWebElement CategoryOverlay => driver.FindElement(By.XPath("//div[contains(@class,'nav-categs-overlay')]"));
@@ -27,11 +27,11 @@ namespace ManualToSdetMercadoLibre.Components.Header
         // MAIN title of submenu
         private IWebElement SubMenuTitle => SubMenuContainer.FindElement(By.CssSelector("header div[role='heading']"));
         // ALL subcategory groups
-        private IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
-        private IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
+        public IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
+        public IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
 
         // items inside each group
-        private IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
+        public IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
 
         private IList<IWebElement> GroupTitles => SubMenuContainer.FindElements(By.CssSelector("a.nav-categs-detail__title"));
 
@@ -42,7 +42,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         private By CategoryTitleLink => By.XPath(".//div[contains(@class,'nav-categs-detail__title')]//a");
 
 
-        private By CategoryItemsLinks => By.XPath(".//ul[contains(@class,'nav-categs-detail__categ-list')]//a");
+        private readonly By CategoryItemsLinks = By.XPath(".//ul[contains(@class,'nav-categs-detail__categ-list')]//a");
 
 
 
@@ -52,18 +52,12 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
         // Links del menú de usuario
         private By CreateAccountLink => By.CssSelector("a[data-link-id='registration']");
-
-
         private By LoginLink => By.CssSelector("a[data-link-id='login']");
-
-
         private By PurchasesLink => By.CssSelector("a[data-link-id='purchases']");
 
 
         // Icono del carrito
         private By CartIcon => By.Id("nav-cart");
-
-
 
 
         // ===== ACTIONS =====
@@ -169,7 +163,11 @@ namespace ManualToSdetMercadoLibre.Components.Header
         // Usar  para Tecnologia Dropdown
         public HeaderCategoriesComponent OpenCategoriesSubDropDown(string categoryName)
         {
+            var category = GetCategoryElement(categoryName);
+
             Hover(GetCategoryElement(categoryName));
+
+            category.Click();
 
             return this;
         }
@@ -196,9 +194,6 @@ namespace ManualToSdetMercadoLibre.Components.Header
 
             throw new NoSuchElementException($"No se encontró el grupo '{groupTitle}'");
         }
-
-
-
 
         //NavMenu methods
 

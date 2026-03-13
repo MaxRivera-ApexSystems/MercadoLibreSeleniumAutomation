@@ -25,10 +25,9 @@ namespace ManualToSdetMercadoLibre.Components.Header
             Category = new HeaderCategoriesComponent(driver);
 
         }
-        public void SearchFor(string text)
+        public SearchResultsPage SearchFor(string text)
         {
-            Search.SearchFor(text);
-
+            return Search.SearchFor(text);
         }
         public void OpenCategory(string categoryName)
         {
@@ -69,10 +68,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
             return navSubMenuLinks.Select(l => l.Text);
         }
 
-        public bool IsPromoBannerVisible()
-        {
-            return PromoBanner.FreeShippingBanner.Displayed;
-        }
+        
 
 
 
