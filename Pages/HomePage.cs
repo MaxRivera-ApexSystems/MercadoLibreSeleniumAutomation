@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenQA.Selenium;
 using ManualToSdetMercadoLibre.Components;
-
-using ManualToSdetMercadoLibre.Components.Header;
 using ManualToSdetMercadoLibre.Components.Carousel;
+using ManualToSdetMercadoLibre.Components.Header;
+using NUnit.Framework.Interfaces;
+using OpenQA.Selenium;
 
 namespace ManualToSdetMercadoLibre.Pages
 {
@@ -16,9 +16,6 @@ namespace ManualToSdetMercadoLibre.Pages
         // Attach the header component
         public HeaderComponent Header { get; }
         public CarouselComponent Carousel { get; }
-
-
-
         // Inject driver
         public HomePage(IWebDriver driver) : base(driver)
         {
@@ -26,8 +23,11 @@ namespace ManualToSdetMercadoLibre.Pages
             Carousel = new CarouselComponent(driver);
         }
 
-       
 
+        public SearchResultsPage Search(string text)
+        {
+            return Header.SearchFor(text);
+        }
 
     }
 

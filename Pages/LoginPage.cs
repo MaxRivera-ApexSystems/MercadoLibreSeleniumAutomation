@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ManualToSdetMercadoLibre.config;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -56,44 +57,25 @@ namespace ManualToSdetMercadoLibre.Pages
             return new HomePage(driver);
         }
 
-        public string GetErrorMessage()
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
-                wait.Until(d => d.FindElements(ErrorMessage).Any() && d.FindElement(ErrorMessage).Displayed);
-                return driver.FindElement(ErrorMessage).Text;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
+   
         // --- Convenience method for full login flow ---
-        public void InjectLoginCookie()
+        public HomePage InjectLoginCookie()
         {
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-
-            Cookie ssidCookie = new Cookie(
-                "ssid",
-                "ghy-031313-NwvAXg9IjHVQkFxsVSnL60ZwH8LgVN-__-3265884414-__-1868117798071--RRR_0-RRR_0",
-                ".mercadolibre.com.mx",
-                "/",
-                DateTime.Now.AddHours(2)
-            );
-
+            var cookieValue = ConfigReader.GetSsid(); // string
+            Cookie ssidCookie = new Cookie("ssid", cookieValue, ".mercadolibre.com.mx", "/", DateTime.Now.AddHours(2));
             driver.Manage().Cookies.AddCookie(ssidCookie);
-
+            driver.Manage().Cookies.AddCookie(ssidCookie);
             driver.Navigate().Refresh();
+            return new HomePage(driver);
+
         }
-        public LoginPage LoginAs(string email, string password)
+        public HomePage LoginAs(string email, string password)
         {
             EnterEmail(email)
                 .ClickContinue()
-                .EnterPassword(password)
-                .ClickLogin();
-            return this;
+                .EnterPassword(password);
+
+            return ClickLogin(); // esto regresa HomePage
         }
     }
 }

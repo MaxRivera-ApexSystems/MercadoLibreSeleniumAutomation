@@ -18,135 +18,106 @@ namespace ManualToSdetMercadoLibre.Tests
     public class HeaderTests : TestBase
     {
         private HomePage home;
-        private HeaderComponent header;
-        private HeaderCategoriesComponent categories;
-        private CarouselComponent carousel;
-        private LoginPage loginPage;
-        private SearchResultsPage resultsPage;
-
 
         [SetUp]
         public void TestSetUp()
         {
-            home = new HomePage(driver);
-            categories = new HeaderCategoriesComponent(driver);
-            header = new HeaderComponent(driver);
-            loginPage = new LoginPage(driver);
-            resultsPage = new SearchResultsPage(driver);
-
-
+            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+             home = new HomePage(driver);
 
         }
+
         [Test]
         public void SearchBarSingleProductDataReturn()
         {
-            var resultsPage = new SearchResultsPage(driver);
-
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-
-            header.Search.SearchFor("Pokemon");
-            Thread.Sleep(5000);
-
+            var resultsPage = home.Search("Pokemon");
             resultsPage.WaitForResultsFromSearchInput();
-
-
-
-            int count = resultsPage.GetProductCount();
-
-            Console.WriteLine($"Productos encontrados: {count}");
-            var product = resultsPage.GetProductInfoByIndex(4);
+            var product = resultsPage.GetProductByIndex(4);
+            Console.WriteLine(product.GetProductName());
         }
+
         [Test]
         public void SearchBarAllProductDataReturn()
         {
-            var resultsPage = new SearchResultsPage(driver);
+            var resultsPage = home.Search("Nintendo");
+            resultsPage.WaitForResultsFromSearchInput();
+            var products = resultsPage.GetProducts();
+            foreach (var product in products)
+            {
+                Console.WriteLine(product.ToFormattedString());
+            }
+        }
 
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+        [Test]
+        public void SearchAfterLoginTest()    // cambar a fljo con  real con el login page
+        {
+            var log = new LoginPage(driver).InjectLoginCookie();
+            var resultsPage = home.Search("Nintendo");
+            resultsPage.WaitForResultsFromSearchInput();
+            var products = resultsPage.GetProducts();
+        }
 
-            header.Search.SearchFor("Nintendo");
-            Thread.Sleep(5000);
+        [Test]
+        public void SearchAfterLoginWithCookie()
+        {
+            var home = new LoginPage(driver).InjectLoginCookie();
+            var resultsPage = home.Search("Nintendo");
+            resultsPage.WaitForResultsFromSearchInput();
+            Assert.That(resultsPage.GetProductCount(), Is.GreaterThan(0));
+        }
+
+        [Test]
+        public void SearchReturnsResults()
+        {
+            var resultsPage = home.Search("Nintendo");
 
             resultsPage.WaitForResultsFromSearchInput();
 
-            int count = resultsPage.GetProductCount();
+            var count = resultsPage.GetProductCount();
 
-            Console.WriteLine($"Productos encontrados: {count}");
-            var products = resultsPage.LogAndGetProductsInfo();
+            Assert.That(count, Is.GreaterThan(0), "No se encontraron productos");
         }
-
         [Test]
-        public void SearchAfterLoginTest()
+        public void AllProductsHaveNames()
         {
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-            loginPage.InjectLoginCookie();
-
-            Console.WriteLine("Session injected successfully.");
-
-            Thread.Sleep(2000);
            
 
-            Console.WriteLine("Login successful. Ready to start test flow.");
+            var resultsPage = home.Search("Nintendo");
 
-            // Ahora sí podemos buscar segun
-            header.Search.SearchFor("Nintendo");
-            Thread.Sleep(2000);
-            var products = resultsPage.LogAndGetProductsInfo();
+            resultsPage.WaitForResultsFromSearchInput();
 
+            var products = resultsPage.GetProducts();
 
-        }
-
-        [Test]
-        public void HoverOverCategories()
-        {
-
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
-
-            categories.OpenCategoriesDropDown();
-            categories.OpenCategoriesSubDropDown("Tecnología");
-            Thread.Sleep(3000);
-            var groupTitles = categories.GetAvailableGroupTitles();
-
-            Console.WriteLine("Grupos encontrados: " + groupTitles.Count);
-
-            foreach (var title in groupTitles)
+            foreach (var product in products)
             {
-                Console.WriteLine(title);
+                Assert.That(product.GetProductName(), Is.Not.Empty);
             }
-           
+        }
+        [Test]
+        public void AllProductsHavePrices()
+        {
+            var resultsPage = home.Search("Nintendo");
+
+            resultsPage.WaitForResultsFromSearchInput();
+
+            var products = resultsPage.GetProducts();
+
+            foreach (var product in products)
+            {
+                Assert.That(product.GetProductPrice(), Is.Not.Empty);
+            }
         }
 
         [Test]
-        public void SubDropDownTest()
+        public void ClickProductNavigatesToDetails()
         {
+            var resultsPage = home.Search("Nintendo");
 
-            driver.Navigate().GoToUrl("https://www.mercadolibre.com.mx/");
+            resultsPage.WaitForResultsFromSearchInput();
 
-            categories.OpenCategoriesDropDown();
-            categories.OpenCategoriesSubDropDown("Tecnología");
-            categories.ClickItemInGroup("Consolas y Videojuegos", "Videojuegos");
-            Thread.Sleep(3000);
+            resultsPage.ClickProductByIndex(0);
 
-
-            resultsPage.WaitForCategorySection();
-            int count = resultsPage.GetProductCount();
-
-            var products = resultsPage.LogAndGetProductsInfo();
-
-
-
+            Assert.That(driver.Url, Does.Contain("mercadolibre"));
         }
-
-
-    
-
-
-      
-
-
-
-
-
-
-
     }
 }

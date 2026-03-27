@@ -22,7 +22,7 @@ namespace ManualToSdetMercadoLibre.Components.Header
         public void ClickSearchButton() => SearchButton.Click();
 
         public SearchResultsPage SearchFor(string query)
-        {
+        {  // agregar los waits 
             SearchInput.Clear();
             SearchInput.SendKeys(query);
             SearchButton.Click();

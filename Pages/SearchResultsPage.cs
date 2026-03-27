@@ -41,6 +41,18 @@ namespace ManualToSdetMercadoLibre.Pages
             );
         }
 
+
+        public Product GetProductByIndex(int index)
+        {
+            var cards = driver.FindElements(ProductCards);
+
+            if (index < 0 || index >= cards.Count)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                    $"Index {index} is out of range. Total products: {cards.Count}");
+
+            return new Product(cards[index]);
+        }
+
         public void WaitForCategorySection()
         {
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
@@ -60,14 +72,9 @@ namespace ManualToSdetMercadoLibre.Pages
         public void WaitForResultsFromSearchInput()
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-
             wait.Until(d => d.FindElements(SearchResultItems).Count > 0);
-
-
         }
 
-
-        // --- COUNT PRODUCTS ---
         public int GetVisibleProductsCount()
         {
             return driver.FindElements(GridItems).Count;

@@ -19,9 +19,7 @@ namespace ManualToSdetMercadoLibre.Pages
             this.driver = driver; 
 
         }
-
-
-
+    
         public void GoToUrl(string url)
         {
             driver.Navigate().GoToUrl(url);

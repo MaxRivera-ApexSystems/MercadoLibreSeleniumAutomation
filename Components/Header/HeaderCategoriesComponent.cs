@@ -18,7 +18,6 @@ namespace ManualToSdetMercadoLibre.Components.Header
         private IWebElement CategoriasButton => driver.FindElement(By.XPath("//a[@data-js='nav-menu-categories-trigger']"));
         // NEW — overlay locator Hover over 
         private IWebElement CategoryOverlay => driver.FindElement(By.XPath("//div[contains(@class,'nav-categs-overlay')]"));
-
         private IReadOnlyCollection<IWebElement> CategoryItems => driver.FindElements(By.XPath("//ul[@class='nav-categs-departments']//a"));
         //===== GENERIC CATEGORIE LOCATOR =====
         private IWebElement GetCategoryElement(string categoryName) => driver.FindElement(By.XPath($"//ul//a[normalize-space()='{categoryName}']"));
@@ -29,68 +28,42 @@ namespace ManualToSdetMercadoLibre.Components.Header
         // ALL subcategory groups
         public IReadOnlyCollection<IWebElement> SubCategoryGroups => SubMenuContainer.FindElements(By.CssSelector("div.nav-categs-detail__categ"));
         public IReadOnlyCollection<IWebElement> SubCategoryGroupsOnlyTitles => SubMenuContainer.FindElements(By.XPath("//div[contains(@class,'nav-categs-detail__title')]//a"));
-
         // items inside each group
         public IReadOnlyCollection<IWebElement> SubCategoryLinks => SubMenuContainer.FindElements(By.CssSelector("ul.nav-categs-detail__categ-list a"));
-
         private IList<IWebElement> GroupTitles => SubMenuContainer.FindElements(By.CssSelector("a.nav-categs-detail__title"));
-
         //Sub dropdown Tecnologia
         private By CategoryGroupContainers => By.XPath("//div[contains(@class,'nav-categs-detail__categ')]");
-
-
         private By CategoryTitleLink => By.XPath(".//div[contains(@class,'nav-categs-detail__title')]//a");
-
-
         private readonly By CategoryItemsLinks = By.XPath(".//ul[contains(@class,'nav-categs-detail__categ-list')]//a");
-
-
-
         //  BOTONES  DE PERFIL DE USUARIO
-        private By UserMenuContainer => By.Id("nav-header-menu")
-            ;
-
+        private By UserMenuContainer => By.Id("nav-header-menu");
         // Links del menú de usuario
         private By CreateAccountLink => By.CssSelector("a[data-link-id='registration']");
         private By LoginLink => By.CssSelector("a[data-link-id='login']");
         private By PurchasesLink => By.CssSelector("a[data-link-id='purchases']");
-
-
         // Icono del carrito
         private By CartIcon => By.Id("nav-cart");
-
-
         // ===== ACTIONS =====
-
         //Technology dropdown Groups
         public IList<string> GetItemsForGroup(string groupTitle)
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-
-            //kgda?
             var groupContainer = GetGroupContainerByTitle(groupTitle);
-
             var items = groupContainer.FindElements(CategoryItemsLinks);
-
             return items.Where(i => i.Displayed).Select(i => i.Text.Trim()).Where(t => !string.IsNullOrEmpty(t)).ToList();
-
         }
 
         public void ClickGroupTitle(string groupTitle)
         {
             var groupContainer = GetGroupContainerByTitle(groupTitle);
-
             var titleLink = groupContainer.FindElement(CategoryTitleLink);
-
             titleLink.Click();
         }
 
         public void ClickItemInGroup(string groupTitle, string itemText)
         {
             var groupContainer = GetGroupContainerByTitle(groupTitle);
-
             var items = groupContainer.FindElements(CategoryItemsLinks);
-
             var itemToClick = items.FirstOrDefault(i => i.Text.Trim().Equals(itemText));
 
             if (itemToClick == null)
