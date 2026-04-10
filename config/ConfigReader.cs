@@ -13,6 +13,10 @@ namespace ManualToSdetMercadoLibre.config
 
         public static string GetSsid()
         {
+            //Este comentario se puede considerar como solo un extra:
+            //El documento busca un "config\config.json" aunque en el proyecto el archivo es llamado "config\testconfig.json"
+            //y, al menos en mi caso, no es agregado durante el build.
+            //Haciendo las adecuaciones necesarias funciona bien.
             var json = File.ReadAllText(configPath);
             var doc = JsonDocument.Parse(json);
 
