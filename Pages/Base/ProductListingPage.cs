@@ -15,7 +15,7 @@ namespace ManualToSdetMercadoLibre.Pages.Base
         public string PreviousPrice { get; set; }
         public string Discount { get; set; }
         public string ShippingInfo { get; set; }
-    } // remove?
+    } // remove? Unless you also interact with a web service directly: yes.
 
 
     public abstract class ProductListingPage : BaseComponent
@@ -57,16 +57,23 @@ namespace ManualToSdetMercadoLibre.Pages.Base
 
         public int GetProductCount()
         {
+            //Este método se puede considerar una rutina de usuario más que parte del page object:.
+            //debido a que este número no es obtenido directamente de la página sino el equivalente
+            //al usuario contar manualmente los elementos "Product Card" encontrados.
             return driver.FindElements(ProductCards).Count;
         }
 
         public IList<string> GetProductTitles()
         {
+            //Al igual que el método anterior, esto es algo que no hace el "Page Object" en sí mismo.
             return driver.FindElements(ProductTitles).Select(e => e.Text).ToList();
         }
 
         public void ClickProductByIndex(int index)
         {
+            //Aunque ciertamente la página en si misma dispone el orden de los elementos con los que interactuar,
+            //el decidir el índice le corresponde exclusivamente al usuario: en ninguna instancia el page object
+            //"pregunta" al usuario cual indice usar para encontrar el producto.
             var products = driver.FindElements(ProductCards);
             if (index >= products.Count) throw new ArgumentOutOfRangeException(nameof(index));
             products[index].Click();
@@ -107,7 +114,7 @@ namespace ManualToSdetMercadoLibre.Pages.Base
             {
                 return HasPreviousPrice()
                     ? element.FindElement(PreviousPrices).Text.Replace("\n", " ").Trim()
-                    : "N/A";
+                    : "N/A"; //Devolver null cuando algo no existe es aceptable.
             }
 
             public bool HasDiscount()
@@ -119,18 +126,19 @@ namespace ManualToSdetMercadoLibre.Pages.Base
             {
                 return HasDiscount()
                     ? element.FindElement(DiscountBadges).Text
-                    : "Sin descuento";
+                    : "Sin descuento"; //Devolver null cuando algo no existe es aceptable
             }
 
             public string GetShippingInfo()
             {
                 var el = element.FindElements(ShippingInfo).FirstOrDefault();
-                return el != null ? el.Text : "Envío estándar/No especificado";
+                return el != null ? el.Text : "Envío estándar/No especificado"; //Resolver esto será interesante: no tengo sugerencias XP
             }
 
 
             public string ToFormattedString()
             {
+                //Este es un excelente método de utileria aunque tampoco forma parte del page object.
                 return
                     $"Nombre: {GetProductName()}\n" +
                     $"Precio: {GetProductPrice()}\n" +
@@ -138,6 +146,12 @@ namespace ManualToSdetMercadoLibre.Pages.Base
                     $"Descuento: {GetDiscount()}\n" +
                     $"Envío: {GetShippingInfo()}\n" +
                     $"---------------------------";
+            }
+
+            public ProductDetailsPage GoToProductDetails(IWebDriver driver) //Esto es un pequeño reto para la siguiente sesión.
+            {
+                element.FindElement(ProductTitles).Click();
+                return new ProductDetailsPage(driver);
             }
 
 

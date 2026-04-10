@@ -64,6 +64,18 @@ namespace ManualToSdetMercadoLibre.Tests
             var resultsPage = home.Search("Nintendo");
             resultsPage.WaitForResultsFromSearchInput();
             Assert.That(resultsPage.GetProductCount(), Is.GreaterThan(0));
+
+            var products = resultsPage.GetProducts();
+            Assert.Multiple(() =>
+            {
+                Assert.That(products, Has.Count.GreaterThan(5));
+                foreach (var product in products)
+                {
+                    Assert.That(product.GetProductName, Is.Not.Null.Or.Empty);
+                }
+            });
+            //Necesario hacer login para entrar a los detalles de producto.
+            products[3].GoToProductDetails();
         }
 
         [Test]
@@ -72,8 +84,9 @@ namespace ManualToSdetMercadoLibre.Tests
             var resultsPage = home.Search("Nintendo");
 
             resultsPage.WaitForResultsFromSearchInput();
+            var productsAvailable = resultsPage.GetProducts();
 
-            var count = resultsPage.GetProductCount();
+            var count = productsAvailable.Count;
 
             Assert.That(count, Is.GreaterThan(0), "No se encontraron productos");
         }
@@ -115,9 +128,19 @@ namespace ManualToSdetMercadoLibre.Tests
 
             resultsPage.WaitForResultsFromSearchInput();
 
-            resultsPage.ClickProductByIndex(0);
-
             Assert.That(driver.Url, Does.Contain("mercadolibre"));
+
+            var products = resultsPage.GetProducts();
+            Assert.Multiple(() =>
+            {
+                Assert.That(products, Has.Count.GreaterThan(5));
+                foreach (var product in products) {
+                    Assert.That(product.GetProductName, Is.Not.Null.Or.Empty);
+                }
+            });
+            //Necesario hacer login para entrar a los detalles de producto.
+            products[3].GoToProductDetails();
+           
         }
     }
 }
