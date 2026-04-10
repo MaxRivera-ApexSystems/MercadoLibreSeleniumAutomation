@@ -61,6 +61,8 @@ namespace ManualToSdetMercadoLibre.Pages
         // --- Convenience method for full login flow ---
         public HomePage InjectLoginCookie()
         {
+            //Es conveneinte dejar este tipo de metodos para Setup de la prueba en vez del page object.
+            //Para este caso en particular, la cookie no es solo para el HomePage u login, es para toda la aplicación.
             var cookieValue = ConfigReader.GetSsid(); // string
             Cookie ssidCookie = new Cookie("ssid", cookieValue, ".mercadolibre.com.mx", "/", DateTime.Now.AddHours(2));
             driver.Manage().Cookies.AddCookie(ssidCookie);

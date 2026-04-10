@@ -35,7 +35,7 @@ namespace ManualToSdetMercadoLibre.Pages
         public void WaitForResults()
         {
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-
+            //Aunque ciertamente esto facilita las cosas (y no está en uso), ¿que sucede cuando el criterio de búsqueda usado en realidad tiene 0 resultados?
             wait.Until(d =>
                 d.FindElements(GridItems).Count > 0
             );
@@ -44,6 +44,7 @@ namespace ManualToSdetMercadoLibre.Pages
 
         public Product GetProductByIndex(int index)
         {
+            //Este es un buen método de utileria aunque no es una acción que el page object haga sino el usuario.
             var cards = driver.FindElements(ProductCards);
 
             if (index < 0 || index >= cards.Count)
@@ -55,6 +56,7 @@ namespace ManualToSdetMercadoLibre.Pages
 
         public void WaitForCategorySection()
         {
+            //Aquí aplica el mismo comentario que en el método WaitForResults y 
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
 
             wait.Until(d =>
@@ -71,12 +73,17 @@ namespace ManualToSdetMercadoLibre.Pages
 
         public void WaitForResultsFromSearchInput()
         {
+            //Se sugiere hacer este metodo privado ya que la espera es implícita y no
+            //algo hecho bajo demanda por el usuario.
+            //De hecho, de alguna manera, podría ser parte del constructor para la página SearchResults.
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(15));
-            wait.Until(d => d.FindElements(SearchResultItems).Count > 0);
+            wait.Until(d => d.FindElements(SearchResultItems).Count > 0); //Esperar siempre por resultados es potencialmente riesgoso.
         }
 
         public int GetVisibleProductsCount()
         {
+            //Este es un método de utileria dado que no es una acción del page object
+            //sino algo que hace el usuario.
             return driver.FindElements(GridItems).Count;
         }
 
